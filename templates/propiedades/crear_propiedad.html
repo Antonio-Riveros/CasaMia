@@ -1,33 +1,368 @@
 {% extends 'base.html' %}
 
-{% block title %}Crear Propiedad{% endblock %}
+{% block title %}{% if form.instance.pk %}Editar{% else %}Crear Nueva{% endif %} Propiedad | CasaMía{% endblock %}
 
 {% block content %}
-<div class="container py-5">
-    <h2 class="mb-4">{% if form.instance.pk %}Editar{% else %}Crear{% endif %} Propiedad</h2>
+<div class="container py-4 py-lg-5">
+    <!-- Cabecera con icono -->
+    <div class="row align-items-center mb-4 mb-lg-5">
+        <div class="col">
+            <div class="d-flex align-items-center gap-3">
+                <div class="icon-circle" style="background: var(--gradiente-violeta);">
+                    <i class="bi bi-house-add fs-4 text-white"></i>
+                </div>
+                <div>
+                    <h1 class="h2 mb-1 fw-bold" style="color: var(--violeta-intenso);">
+                        {% if form.instance.pk %}Editar{% else %}Crear Nueva{% endif %} Propiedad
+                    </h1>
+                    <p class="text-muted mb-0">
+                        Completa todos los datos para {% if form.instance.pk %}actualizar{% else %}publicar{% endif %} tu propiedad
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-auto">
+            <div class="step-indicator">
+                <span class="step active">1</span>
+                <span class="step">2</span>
+                <span class="step">3</span>
+            </div>
+        </div>
+    </div>
 
+    <!-- Mensajes de alerta -->
     {% if messages %}
         {% for message in messages %}
-            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show shadow-sm mb-4 border-0" role="alert">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-{% if message.tags == 'success' %}check-circle{% else %}exclamation-circle{% endif %} me-2"></i>
+                    <span>{{ message }}</span>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
         {% endfor %}
     {% endif %}
 
-    <form method="POST" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.as_p }}
-
-        <h4>Imágenes (mínimo igual a la cantidad de habitaciones)</h4>
-        {{ formset.management_form }}
-        {% for form in formset %}
-            <div class="mb-2">
-                {{ form.imagen.label_tag }} {{ form.imagen }}
-                {% if form.DELETE %}
-                    {{ form.DELETE }} Eliminar
-                {% endif %}
+    <!-- Formulario principal -->
+    <div class="card border-0 shadow-lg overflow-hidden">
+        <div class="row g-0">
+            <!-- Panel lateral de información -->
+            <div class="col-lg-4 p-4 d-flex flex-column" style="background: rgba(179, 136, 255, 0.05);">
+                <div class="mb-4">
+                    <h4 class="fw-semibold mb-3" style="color: var(--violeta-intenso);">
+                        <i class="bi bi-info-circle me-2"></i>Información importante
+                    </h4>
+                    <ul class="list-unstyled">
+                        <li class="mb-3 d-flex align-items-start">
+                            <i class="bi bi-check-circle text-success me-2 mt-1"></i>
+                            <span class="small">Sube fotos de alta calidad para mejores resultados</span>
+                        </li>
+                        <li class="mb-3 d-flex align-items-start">
+                            <i class="bi bi-check-circle text-success me-2 mt-1"></i>
+                            <span class="small">Completa todos los campos obligatorios <span class="text-danger">*</span></span>
+                        </li>
+                        <li class="mb-3 d-flex align-items-start">
+                            <i class="bi bi-check-circle text-success me-2 mt-1"></i>
+                            <span class="small">Las imágenes deben ser mínimo igual a la cantidad de habitaciones</span>
+                        </li>
+                        <li class="mb-3 d-flex align-items-start">
+                            <i class="bi bi-check-circle text-success me-2 mt-1"></i>
+                            <span class="small">Se recomienda incluir imágenes del exterior y cada habitación</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="mt-auto">
+                    <div class="card border-0 text-white" style="background: var(--gradiente-violeta);">
+                        <div class="card-body p-3">
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-lightbulb fs-4 me-3"></i>
+                                <div>
+                                    <p class="mb-0 small fw-medium">
+                                        Una buena descripción aumenta las visitas en un 40%
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-        {% endfor %}
 
-        <button type="submit" class="btn btn-primary mt-3">{% if form.instance.pk %}Actualizar{% else %}Crear{% endif %}</button>
-    </form>
+            <!-- Formulario -->
+            <div class="col-lg-8">
+                <div class="p-4 p-lg-5">
+                    <form method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
+                        {% csrf_token %}
+                        
+                        <!-- Campos del formulario -->
+                        <div class="row g-4">
+                            {% for field in form %}
+                                <div class="col-md-{% if field.name in 'titulo,descripcion' %}12{% else %}6{% endif %}">
+                                    <div class="form-floating">
+                                        {{ field }}
+                                        <label for="{{ field.id_for_label }}" class="form-label">
+                                            {{ field.label }}
+                                            {% if field.field.required %}<span class="text-danger">*</span>{% endif %}
+                                        </label>
+                                        {% if field.help_text %}
+                                            <div class="form-text text-muted">{{ field.help_text }}</div>
+                                        {% endif %}
+                                        {% if field.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {% for error in field.errors %}
+                                                    <i class="bi bi-exclamation-circle me-1"></i>{{ error }}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Sección de imágenes -->
+                        <div class="mt-5 pt-4 border-top">
+                            <h4 class="fw-bold mb-4 d-flex align-items-center" style="color: var(--violeta-intenso);">
+                                <i class="bi bi-images me-2"></i>Galería de Imágenes
+                                <span class="badge ms-2" style="background: var(--gradiente-violeta);">
+                                    Mínimo: {{ form.instance.habitaciones|default:"1" }} imágenes
+                                </span>
+                            </h4>
+                            
+                            <div class="alert d-flex align-items-center mb-4" style="background: rgba(179, 136, 255, 0.1); border-color: rgba(179, 136, 255, 0.3);">
+                                <i class="bi bi-info-circle fs-5 me-3" style="color: var(--violeta-intenso);"></i>
+                                <div>
+                                    <p class="mb-1 fw-medium">Sube al menos <strong>{{ form.instance.habitaciones|default:"1" }} imagen(es)</strong> (igual al número de habitaciones)</p>
+                                    <p class="mb-0 small">Se recomiendan fotos profesionales de cada espacio.</p>
+                                </div>
+                            </div>
+
+                            {{ formset.management_form }}
+                            <div class="row g-3" id="image-container">
+                                {% for form in formset %}
+                                    <div class="col-md-6 col-lg-4 image-form-item">
+                                        <div class="card h-100 border-0 shadow-sm">
+                                            <div class="card-body p-3">
+                                                <div class="form-group">
+                                                    <label class="form-label small fw-bold mb-2 d-block">
+                                                        Imagen #{{ forloop.counter }}
+                                                    </label>
+                                                    
+                                                    <!-- Vista previa de imagen existente -->
+                                                    {% if form.instance.imagen %}
+                                                        <div class="mb-3 text-center">
+                                                            <img src="{{ form.instance.imagen.url }}" 
+                                                                 alt="Imagen actual" 
+                                                                 class="img-fluid rounded mb-2"
+                                                                 style="max-height: 120px; object-fit: cover;">
+                                                        </div>
+                                                    {% endif %}
+                                                    
+                                                    <!-- Campo de archivo -->
+                                                    <div class="file-input-wrapper">
+                                                        {{ form.imagen }}
+                                                        <div class="file-input-custom">
+                                                            <i class="bi bi-cloud-upload me-2"></i>
+                                                            <span class="file-input-text">
+                                                                {% if form.instance.imagen %}Cambiar imagen{% else %}Seleccionar imagen{% endif %}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <!-- Checkbox para eliminar -->
+                                                    {% if form.DELETE %}
+                                                        <div class="form-check mt-3">
+                                                            {{ form.DELETE }}
+                                                            <label class="form-check-label" for="{{ form.DELETE.id_for_label }}">
+                                                                <i class="bi bi-trash me-1"></i>Eliminar esta imagen
+                                                            </label>
+                                                        </div>
+                                                    {% endif %}
+                                                    
+                                                    {% for hidden in form.hidden_fields %}
+                                                        {{ hidden }}
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% empty %}
+                                    <div class="col-12 text-center py-5">
+                                        <i class="bi bi-images text-muted fs-1 mb-3"></i>
+                                        <p class="text-muted">No hay imágenes cargadas aún</p>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            
+                            <div class="text-center mt-4">
+                                <button type="button" class="btn btn-outline-primary" id="add-more-images" style="border-color: var(--violeta-intenso); color: var(--violeta-intenso);">
+                                    <i class="bi bi-plus-circle me-2"></i>Agregar más imágenes
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Botones de acción -->
+                        <div class="d-flex justify-content-between align-items-center mt-5 pt-4 border-top">
+                            <a href="javascript:history.back()" class="btn btn-outline-secondary px-4">
+                                <i class="bi bi-arrow-left me-2"></i>Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-primary btn-lg px-5">
+                                <i class="bi bi-{% if form.instance.pk %}check-lg{% else %}plus-lg{% endif %} me-2"></i>
+                                {% if form.instance.pk %}Actualizar Propiedad{% else %}Publicar Propiedad{% endif %}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+<!-- Estilos específicos para el formulario -->
+<style>
+    .icon-circle {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .step-indicator {
+        display: flex;
+        gap: 8px;
+    }
+    
+    .step {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background-color: #dee2e6;
+    }
+    
+    .step.active {
+        background: var(--gradiente-violeta);
+        transform: scale(1.2);
+    }
+    
+    .file-input-wrapper {
+        position: relative;
+        overflow: hidden;
+        border-radius: 8px;
+    }
+    
+    .file-input-wrapper input[type="file"] {
+        position: absolute;
+        top: 0;
+        left: 0;
+        opacity: 0;
+        width: 100%;
+        height: 100%;
+        cursor: pointer;
+    }
+    
+    .file-input-custom {
+        padding: 12px;
+        background-color: rgba(179, 136, 255, 0.05);
+        border: 2px dashed rgba(179, 136, 255, 0.3);
+        border-radius: 8px;
+        text-align: center;
+        transition: all 0.3s ease;
+        color: var(--violeta-intenso);
+        cursor: pointer;
+    }
+    
+    .file-input-wrapper:hover .file-input-custom {
+        border-color: var(--violeta-intenso);
+        background-color: rgba(179, 136, 255, 0.1);
+    }
+    
+    .form-floating > .form-control,
+    .form-floating > .form-control-plaintext,
+    .form-floating > .form-select {
+        height: calc(3.5rem + 2px);
+        line-height: 1.25;
+        padding: 1rem 0.75rem;
+    }
+    
+    .form-floating > .form-control:focus,
+    .form-floating > .form-control:not(:placeholder-shown) {
+        padding-top: 1.625rem;
+        padding-bottom: 0.625rem;
+    }
+    
+    .form-floating > label {
+        padding: 1rem 0.75rem;
+        opacity: 0.7;
+    }
+    
+    .form-control:focus {
+        border-color: var(--violeta-suave);
+        box-shadow: 0 0 0 0.25rem rgba(179, 136, 255, 0.25);
+    }
+    
+    [data-bs-theme="dark"] .card {
+        background-color: #1c1c1c;
+        border-color: #2d2d2d;
+    }
+    
+    [data-bs-theme="dark"] .form-control {
+        background-color: #2d2d2d;
+        border-color: #3d3d3d;
+        color: #f8f9fa;
+    }
+    
+    [data-bs-theme="dark"] .form-control:focus {
+        background-color: #2d2d2d;
+        border-color: var(--violeta-suave);
+        color: #f8f9fa;
+    }
+    
+    [data-bs-theme="dark"] .file-input-custom {
+        background-color: rgba(179, 136, 255, 0.05);
+        border-color: rgba(179, 136, 255, 0.2);
+        color: var(--violeta-suave);
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Vista previa de imágenes
+        const fileInputs = document.querySelectorAll('input[type="file"]');
+        fileInputs.forEach(input => {
+            input.addEventListener('change', function(e) {
+                const wrapper = this.closest('.file-input-wrapper');
+                const textSpan = wrapper.querySelector('.file-input-text');
+                const fileName = this.files[0]?.name || 'Seleccionar imagen';
+                textSpan.textContent = fileName.length > 25 ? fileName.substring(0, 25) + '...' : fileName;
+                
+                if (this.files[0] && this.files[0].type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        let preview = wrapper.querySelector('.image-preview');
+                        if (!preview) {
+                            preview = document.createElement('img');
+                            preview.className = 'image-preview img-fluid rounded mb-2';
+                            preview.style.maxHeight = '120px';
+                            preview.style.objectFit = 'cover';
+                            wrapper.querySelector('.file-input-custom').before(preview);
+                        }
+                        preview.src = e.target.result;
+                    }
+                    reader.readAsDataURL(this.files[0]);
+                }
+            });
+        });
+        
+        // Contador de imágenes
+        const imageCount = document.querySelectorAll('.image-form-item').length;
+        const minImages = {{ form.instance.habitaciones|default:"1" }};
+        if (imageCount > 0) {
+            const imageCounter = document.createElement('div');
+            imageCounter.className = 'text-end small mt-2';
+            imageCounter.innerHTML = `<i class="bi bi-image me-1"></i> ${imageCount} imagen(es) cargada(s) | Mínimo requerido: ${minImages}`;
+            document.querySelector('#image-container').after(imageCounter);
+        }
+    });
+</script>
 {% endblock %}

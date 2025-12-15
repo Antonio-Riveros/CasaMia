@@ -1,18 +1,624 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Inicio{% endblock %}
+{% block title %}Inicio - Encuentra tu hogar ideal{% endblock %}
+
+{% block hero %}
+<!-- Hero Section Moderno -->
+<section class="hero-section position-relative overflow-hidden">
+  <!-- Fondo con gradientes y formas -->
+  <div class="position-absolute top-0 start-0 w-100 h-100">
+    <div class="position-absolute" style="top: 10%; left: 5%; width: 300px; height: 300px; background: radial-gradient(circle, rgba(179, 136, 255, 0.1) 0%, transparent 70%);"></div>
+    <div class="position-absolute" style="bottom: 10%; right: 5%; width: 400px; height: 400px; background: radial-gradient(circle, rgba(156, 107, 255, 0.05) 0%, transparent 70%);"></div>
+  </div>
+
+  <div class="container position-relative">
+    <div class="row align-items-center min-vh-75 py-5">
+      <div class="col-lg-6 mb-5 mb-lg-0">
+        <!-- Badge de confianza -->
+        <div class="d-inline-flex align-items-center gap-2 mb-4 p-3 rounded-pill" style="background: rgba(179, 136, 255, 0.1);">
+          <span class="badge rounded-pill" style="background: linear-gradient(135deg, #9c6bff 0%, #7c4dff 100%);">
+            <i class="bi bi-star-fill me-1"></i>Confianza
+          </span>
+          <span class="small">+10 años en el mercado</span>
+        </div>
+
+        <!-- Título principal -->
+        <h1 class="hero-title mb-4">
+          Encuentra el lugar perfecto al cual <span class="text-decoration-underline">llamar hogar</span>
+        </h1>
+
+        <!-- Subtítulo mejorado -->
+        <p class="hero-subtitle mb-4">
+          En <strong class="text-primary">CasaMía</strong> conectamos personas con su hogar ideal. 
+          Simplificamos el proceso de encontrar o alquilar tu próximo hogar con transparencia y tecnología.
+        </p>
+
+        <!-- Características -->
+        <div class="row g-3 mb-4">
+          <div class="col-6 col-md-4">
+            <div class="d-flex align-items-center gap-2">
+              <div class="rounded-circle bg-primary bg-opacity-10 p-2">
+                <i class="bi bi-house-check text-primary"></i>
+              </div>
+              <span class="small">Propiedades verificadas</span>
+            </div>
+          </div>
+          <div class="col-6 col-md-4">
+            <div class="d-flex align-items-center gap-2">
+              <div class="rounded-circle bg-primary bg-opacity-10 p-2">
+                <i class="bi bi-shield-check text-primary"></i>
+              </div>
+              <span class="small">Seguridad garantizada</span>
+            </div>
+          </div>
+          <div class="col-6 col-md-4">
+            <div class="d-flex align-items-center gap-2">
+              <div class="rounded-circle bg-primary bg-opacity-10 p-2">
+                <i class="bi bi-clock-history text-primary"></i>
+              </div>
+              <span class="small">Proceso ágil</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Botones de acción -->
+        <div class="d-flex flex-wrap gap-3">
+          <a href="{% url 'listar_propiedades' %}" class="btn btn-primary btn-lg px-4 py-3">
+            <i class="bi bi-search me-2"></i>Buscar mi nuevo hogar
+          </a>
+          {% if user.is_authenticated %}
+            <a href="{% url 'crear_propiedad' %}" class="btn btn-outline-primary btn-lg px-4 py-3">
+              <i class="bi bi-plus-circle me-2"></i>Publicar propiedad
+            </a>
+          {% else %}
+            <a href="{% url 'register' %}" class="btn btn-outline-primary btn-lg px-4 py-3">
+              <i class="bi bi-person-plus me-2"></i>Crear cuenta
+            </a>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Imagen decorativa del hero -->
+      <div class="col-lg-6">
+        <div class="position-relative">
+          <!-- Imagen principal LOCAL -->
+          <div class="rounded-4 overflow-hidden shadow-lg position-relative z-2">
+            <img src="{% static 'properties/hero/hero-home.jpg' %}" 
+                 alt="Hogar ideal" class="img-fluid hero-img" style="height: 400px; object-fit: cover;">
+            <div class="position-absolute bottom-0 start-0 w-100 p-4 text-white" 
+                 style="background: linear-gradient(transparent, rgba(0,0,0,0.7));">
+              <h5 class="mb-2">Vivienda moderna en Palermo</h5>
+              <p class="small mb-0"><i class="bi bi-geo-alt me-1"></i> Buenos Aires</p>
+            </div>
+          </div>
+
+          <!-- Tarjetas flotantes -->
+          <div class="position-absolute top-0 start-0 mt-4 ms-n4 z-1">
+            <div class="card border-0 shadow-sm" style="width: 180px; transform: rotate(-5deg);">
+              <div class="card-body p-3">
+                <div class="d-flex align-items-center gap-2 mb-2">
+                  <div class="rounded-circle bg-success bg-opacity-10 p-2">
+                    <i class="bi bi-check-lg text-success"></i>
+                  </div>
+                  <span class="small fw-bold">Propiedad verificada</span>
+                </div>
+                <p class="small text-muted mb-0">Documentación en regla</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="position-absolute bottom-0 end-0 mb-4 me-n4 z-1">
+            <div class="card border-0 shadow-sm" style="width: 200px; transform: rotate(3deg);">
+              <div class="card-body p-3">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                  <span class="badge bg-primary">Nuevo</span>
+                  <span class="small text-muted">Hoy</span>
+                </div>
+                <h6 class="mb-1">+15 propiedades</h6>
+                <p class="small text-muted mb-0">Agregadas esta semana</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ola decorativa -->
+  <div class="position-absolute bottom-0 start-0 w-100 overflow-hidden" style="line-height: 0;">
+    <svg viewBox="0 0 1200 120" preserveAspectRatio="none" style="width: 100%; height: 60px;">
+      <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" 
+            opacity=".25" class="shape-fill" fill="currentColor"></path>
+      <path d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z" 
+            opacity=".5" class="shape-fill" fill="currentColor"></path>
+      <path d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z" 
+            class="shape-fill" fill="currentColor"></path>
+    </svg>
+  </div>
+</section>
+{% endblock %}
 
 {% block content %}
-<div class="index-hero d-flex flex-column justify-content-center align-items-center text-center">
-    <h1 class="display-4 mb-4">Encuentra el lugar perfecto al cual llamar hogar</h1>
-    <p class="lead mb-4">
-        Somos un espacio que conecta dueños con inquilinos.<br>
-        Desde CasaMia entendemos lo desafiante que es alquilar,<br>
-        por eso priorizamos la sencillez y te ahorramos tiempo.<br>
-        ¿Qué dices? ¿Buscamos tu nuevo hogar?
-    </p>
-    <a href="{% url 'listar_propiedades' %}" class="btn btn-primary btn-lg">Buscar mi nuevo hogar</a>
+<!-- Stats Section -->
+<section class="py-5">
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-6 col-md-3">
+        <div class="text-center">
+          <div class="display-4 fw-bold text-primary mb-2">500+</div>
+          <p class="text-muted mb-0">Propiedades listadas</p>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="text-center">
+          <div class="display-4 fw-bold text-primary mb-2">98%</div>
+          <p class="text-muted mb-0">Clientes satisfechos</p>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="text-center">
+          <div class="display-4 fw-bold text-primary mb-2">24h</div>
+          <p class="text-muted mb-0">Respuesta rápida</p>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="text-center">
+          <div class="display-4 fw-bold text-primary mb-2">10+</div>
+          <p class="text-muted mb-0">Años de experiencia</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
-</div>
+<!-- Carrusel de Propiedades Destacadas -->
+<section class="py-5 bg-light">
+  <div class="container">
+    <div class="row mb-5">
+      <div class="col">
+        <h2 class="display-5 fw-bold mb-3">Propiedades <span class="text-primary">Destacadas</span></h2>
+        <p class="text-muted">Descubre las mejores oportunidades del mercado esta semana</p>
+      </div>
+      <div class="col-auto">
+        <a href="{% url 'listar_propiedades' %}" class="btn btn-outline-primary">
+          Ver todas <i class="bi bi-arrow-right ms-2"></i>
+        </a>
+      </div>
+    </div>
+
+    <!-- Carrusel con imágenes locales -->
+    <div id="featuredCarousel" class="carousel slide" data-bs-ride="carousel">
+      <div class="carousel-inner">
+        <!-- Slide 1 -->
+        <div class="carousel-item active">
+          <div class="row g-4">
+            <!-- Propiedad 1 -->
+            <div class="col-md-4">
+              <div class="property-card card border-0 shadow-sm h-100 hover-lift">
+                <div class="position-relative overflow-hidden rounded-top">
+                  <img src="{% static 'properties/default/property-1.jpg' %}" 
+                       class="card-img-top property-img" alt="Casa moderna en Palermo">
+                  <div class="position-absolute top-0 start-0 m-3">
+                    <span class="badge bg-primary">Venta</span>
+                  </div>
+                  <div class="position-absolute bottom-0 end-0 m-3">
+                    <button class="btn btn-light btn-sm rounded-circle favorite-btn">
+                      <i class="bi bi-heart"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="card-body">
+                  <h5 class="card-title fw-bold">Casa moderna en Palermo</h5>
+                  <p class="card-text text-muted">
+                    <i class="bi bi-geo-alt me-1"></i> Palermo, Buenos Aires
+                  </p>
+                  <div class="property-features d-flex justify-content-between mb-3">
+                    <span><i class="bi bi-house-door me-1"></i> 4 dorm.</span>
+                    <span><i class="bi bi-bath me-1"></i> 3 baños</span>
+                    <span><i class="bi bi-square me-1"></i> 180 m²</span>
+                  </div>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <h4 class="text-primary fw-bold mb-0">$450.000</h4>
+                    <a href="#" class="btn btn-sm btn-outline-primary">Ver detalles</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Propiedad 2 -->
+            <div class="col-md-4">
+              <div class="property-card card border-0 shadow-sm h-100 hover-lift">
+                <div class="position-relative overflow-hidden rounded-top">
+                  <img src="{% static 'properties/default/property-2.jpg' %}" 
+                       class="card-img-top property-img" alt="Departamento en Recoleta">
+                  <div class="position-absolute top-0 start-0 m-3">
+                    <span class="badge bg-success">Alquiler</span>
+                  </div>
+                  <div class="position-absolute bottom-0 end-0 m-3">
+                    <button class="btn btn-light btn-sm rounded-circle favorite-btn">
+                      <i class="bi bi-heart"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="card-body">
+                  <h5 class="card-title fw-bold">Departamento en Recoleta</h5>
+                  <p class="card-text text-muted">
+                    <i class="bi bi-geo-alt me-1"></i> Recoleta, Buenos Aires
+                  </p>
+                  <div class="property-features d-flex justify-content-between mb-3">
+                    <span><i class="bi bi-house-door me-1"></i> 2 dorm.</span>
+                    <span><i class="bi bi-bath me-1"></i> 2 baños</span>
+                    <span><i class="bi bi-square me-1"></i> 85 m²</span>
+                  </div>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <h4 class="text-primary fw-bold mb-0">$1.200/mes</h4>
+                    <a href="#" class="btn btn-sm btn-outline-primary">Ver detalles</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Propiedad 3 -->
+            <div class="col-md-4">
+              <div class="property-card card border-0 shadow-sm h-100 hover-lift">
+                <div class="position-relative overflow-hidden rounded-top">
+                  <img src="{% static 'properties/default/property-3.jpg' %}" 
+                       class="card-img-top property-img" alt="PH en Belgrano">
+                  <div class="position-absolute top-0 start-0 m-3">
+                    <span class="badge bg-primary">Venta</span>
+                  </div>
+                  <div class="position-absolute bottom-0 end-0 m-3">
+                    <button class="btn btn-light btn-sm rounded-circle favorite-btn">
+                      <i class="bi bi-heart"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="card-body">
+                  <h5 class="card-title fw-bold">PH en Belgrano</h5>
+                  <p class="card-text text-muted">
+                    <i class="bi bi-geo-alt me-1"></i> Belgrano, Buenos Aires
+                  </p>
+                  <div class="property-features d-flex justify-content-between mb-3">
+                    <span><i class="bi bi-house-door me-1"></i> 3 dorm.</span>
+                    <span><i class="bi bi-bath me-1"></i> 2 baños</span>
+                    <span><i class="bi bi-square me-1"></i> 120 m²</span>
+                  </div>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <h4 class="text-primary fw-bold mb-0">$280.000</h4>
+                    <a href="#" class="btn btn-sm btn-outline-primary">Ver detalles</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 2 -->
+        <div class="carousel-item">
+          <div class="row g-4">
+            <!-- Propiedad 4 -->
+            <div class="col-md-4">
+              <div class="property-card card border-0 shadow-sm h-100 hover-lift">
+                <div class="position-relative overflow-hidden rounded-top">
+                  <img src="{% static 'properties/default/property-4.jpg' %}" 
+                       class="card-img-top property-img" alt="Loft en San Telmo">
+                  <div class="position-absolute top-0 start-0 m-3">
+                    <span class="badge bg-primary">Venta</span>
+                  </div>
+                </div>
+                <div class="card-body">
+                  <h5 class="card-title fw-bold">Loft en San Telmo</h5>
+                  <p class="card-text text-muted">
+                    <i class="bi bi-geo-alt me-1"></i> San Telmo, Buenos Aires
+                  </p>
+                  <div class="property-features d-flex justify-content-between mb-3">
+                    <span><i class="bi bi-house-door me-1"></i> 1 dorm.</span>
+                    <span><i class="bi bi-bath me-1"></i> 1 baño</span>
+                    <span><i class="bi bi-square me-1"></i> 65 m²</span>
+                  </div>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <h4 class="text-primary fw-bold mb-0">$190.000</h4>
+                    <a href="#" class="btn btn-sm btn-outline-primary">Ver detalles</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Propiedad 5 -->
+            <div class="col-md-4">
+              <div class="property-card card border-0 shadow-sm h-100 hover-lift">
+                <div class="position-relative overflow-hidden rounded-top">
+                  <img src="{% static 'properties/default/property-5.jpg' %}" 
+                       class="card-img-top property-img" alt="Casa con jardín">
+                  <div class="position-absolute top-0 start-0 m-3">
+                    <span class="badge bg-success">Alquiler</span>
+                  </div>
+                </div>
+                <div class="card-body">
+                  <h5 class="card-title fw-bold">Casa con jardín</h5>
+                  <p class="card-text text-muted">
+                    <i class="bi bi-geo-alt me-1"></i> Nuñez, Buenos Aires
+                  </p>
+                  <div class="property-features d-flex justify-content-between mb-3">
+                    <span><i class="bi bi-house-door me-1"></i> 3 dorm.</span>
+                    <span><i class="bi bi-bath me-1"></i> 2 baños</span>
+                    <span><i class="bi bi-square me-1"></i> 150 m²</span>
+                  </div>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <h4 class="text-primary fw-bold mb-0">$1.800/mes</h4>
+                    <a href="#" class="btn btn-sm btn-outline-primary">Ver detalles</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Propiedad 6 -->
+            <div class="col-md-4">
+              <div class="property-card card border-0 shadow-sm h-100 hover-lift">
+                <div class="position-relative overflow-hidden rounded-top">
+                  <img src="{% static 'properties/default/property-6.jpg' %}" 
+                       class="card-img-top property-img" alt="Departamento Premium">
+                  <div class="position-absolute top-0 start-0 m-3">
+                    <span class="badge bg-info">Oportunidad</span>
+                  </div>
+                </div>
+                <div class="card-body">
+                  <h5 class="card-title fw-bold">Departamento Premium</h5>
+                  <p class="card-text text-muted">
+                    <i class="bi bi-geo-alt me-1"></i> Puerto Madero, Buenos Aires
+                  </p>
+                  <div class="property-features d-flex justify-content-between mb-3">
+                    <span><i class="bi bi-house-door me-1"></i> 4 dorm.</span>
+                    <span><i class="bi bi-bath me-1"></i> 3 baños</span>
+                    <span><i class="bi bi-square me-1"></i> 200 m²</span>
+                  </div>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <h4 class="text-primary fw-bold mb-0">$650.000</h4>
+                    <a href="#" class="btn btn-sm btn-outline-primary">Ver detalles</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Controles del carrusel -->
+      <button class="carousel-control-prev" type="button" data-bs-target="#featuredCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Anterior</span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#featuredCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Siguiente</span>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- Sección de Proceso -->
+<section class="py-5">
+  <div class="container">
+    <div class="text-center mb-5">
+      <h2 class="display-5 fw-bold mb-3">Cómo funciona <span class="text-primary">CasaMía</span></h2>
+      <p class="text-muted col-lg-6 mx-auto">Simplificamos el proceso de encontrar tu hogar en 3 simples pasos</p>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="text-center p-4">
+          <div class="step-number mb-4">
+            <div class="rounded-circle mx-auto d-flex align-items-center justify-content-center" 
+                 style="width: 80px; height: 80px; background: linear-gradient(135deg, rgba(179, 136, 255, 0.1) 0%, rgba(124, 77, 255, 0.05) 100%);">
+              <span class="display-6 fw-bold text-primary">1</span>
+            </div>
+          </div>
+          <h4 class="fw-bold mb-3">Encuentra</h4>
+          <p class="text-muted">Explora nuestra amplia selección de propiedades filtradas según tus preferencias y ubicación deseada.</p>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="text-center p-4">
+          <div class="step-number mb-4">
+            <div class="rounded-circle mx-auto d-flex align-items-center justify-content-center" 
+                 style="width: 80px; height: 80px; background: linear-gradient(135deg, rgba(179, 136, 255, 0.1) 0%, rgba(124, 77, 255, 0.05) 100%);">
+              <span class="display-6 fw-bold text-primary">2</span>
+            </div>
+          </div>
+          <h4 class="fw-bold mb-3">Contacta</h4>
+          <p class="text-muted">Comunícate directamente con el propietario o nuestro equipo de asesores para coordinar una visita.</p>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="text-center p-4">
+          <div class="step-number mb-4">
+            <div class="rounded-circle mx-auto d-flex align-items-center justify-content-center" 
+                 style="width: 80px; height: 80px; background: linear-gradient(135deg, rgba(179, 136, 255, 0.1) 0%, rgba(124, 77, 255, 0.05) 100%);">
+              <span class="display-6 fw-bold text-primary">3</span>
+            </div>
+          </div>
+          <h4 class="fw-bold mb-3">Celebra</h4>
+          <p class="text-muted">Firma el contrato con todas las garantías legales y ¡listo! Ya tienes tu nuevo hogar.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Sección CTA Final -->
+<section class="py-5 bg-primary bg-opacity-10">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-lg-8 mb-4 mb-lg-0">
+        <h2 class="fw-bold mb-3">¿Listo para encontrar tu hogar ideal?</h2>
+        <p class="text-muted mb-0">
+          En CasaMía entendemos lo desafiante que puede ser alquilar o comprar una propiedad. 
+          Por eso priorizamos la sencillez y te ahorramos tiempo. ¿Qué dices? ¿Buscamos tu nuevo hogar?
+        </p>
+      </div>
+      <div class="col-lg-4 text-lg-end">
+        <div class="d-flex flex-column flex-sm-row gap-3">
+          <a href="{% url 'listar_propiedades' %}" class="btn btn-primary btn-lg flex-grow-1">
+            <i class="bi bi-search me-2"></i>Buscar propiedades
+          </a>
+          {% if not user.is_authenticated %}
+            <a href="{% url 'register' %}" class="btn btn-outline-primary btn-lg flex-grow-1">
+              <i class="bi bi-person-plus me-2"></i>Registrarse gratis
+            </a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Estilos específicos para la página de inicio -->
+<style>
+  .hero-section {
+    padding: 8rem 0 6rem;
+    background: linear-gradient(135deg, rgba(248, 249, 250, 0.95) 0%, rgba(255, 255, 255, 1) 100%);
+  }
+
+  [data-bs-theme="dark"] .hero-section {
+    background: linear-gradient(135deg, rgba(28, 28, 28, 0.95) 0%, rgba(18, 18, 18, 1) 100%);
+  }
+
+  .property-card {
+    transition: all 0.3s ease;
+    border-radius: 16px;
+    overflow: hidden;
+  }
+
+  .property-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(156, 107, 255, 0.15) !important;
+  }
+
+  .property-img {
+    height: 250px;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+  }
+
+  .property-card:hover .property-img {
+    transform: scale(1.05);
+  }
+
+  .property-features {
+    font-size: 0.9rem;
+    color: #6c757d;
+  }
+
+  .hover-lift {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1) !important;
+  }
+
+  [data-bs-theme="dark"] .hover-lift:hover {
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3) !important;
+  }
+
+  .step-number {
+    position: relative;
+  }
+
+  .step-number::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100px;
+    height: 100px;
+    background: radial-gradient(circle, rgba(179, 136, 255, 0.1) 0%, transparent 70%);
+    transform: translate(-50%, -50%);
+    z-index: -1;
+  }
+
+  .shape-fill {
+    color: rgba(179, 136, 255, 0.1);
+  }
+
+  [data-bs-theme="dark"] .shape-fill {
+    color: rgba(179, 136, 255, 0.05);
+  }
+
+  .favorite-btn:hover {
+    background-color: var(--bs-primary) !important;
+    color: white !important;
+  }
+
+  .favorite-btn.active {
+    background-color: var(--bs-danger) !important;
+    color: white !important;
+  }
+
+  .favorite-btn.active i {
+    fill: currentColor;
+  }
+
+  /* Animaciones */
+  @keyframes float {
+    0%, 100% { transform: translateY(0) rotate(-5deg); }
+    50% { transform: translateY(-10px) rotate(-5deg); }
+  }
+
+  .floating-card {
+    animation: float 3s ease-in-out infinite;
+  }
+</style>
+
+<script>
+  // Inicializar carrusel
+  document.addEventListener('DOMContentLoaded', function() {
+    const carousel = new bootstrap.Carousel('#featuredCarousel', {
+      interval: 5000,
+      wrap: true,
+      pause: 'hover'
+    });
+
+    // Añadir efecto de hover a las tarjetas
+    const propertyCards = document.querySelectorAll('.property-card');
+    propertyCards.forEach(card => {
+      card.addEventListener('mouseenter', function() {
+        this.style.transform = 'translateY(-8px)';
+      });
+      
+      card.addEventListener('mouseleave', function() {
+        this.style.transform = 'translateY(0)';
+      });
+    });
+
+    // Botones de favoritos
+    const favoriteBtns = document.querySelectorAll('.favorite-btn');
+    favoriteBtns.forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.classList.toggle('active');
+        const icon = this.querySelector('i');
+        if (this.classList.contains('active')) {
+          icon.classList.remove('bi-heart');
+          icon.classList.add('bi-heart-fill');
+        } else {
+          icon.classList.remove('bi-heart-fill');
+          icon.classList.add('bi-heart');
+        }
+      });
+    });
+
+    // Animación para las tarjetas flotantes
+    const floatingCards = document.querySelectorAll('.position-absolute .card');
+    floatingCards.forEach((card, index) => {
+      card.style.animationDelay = `${index * 0.5}s`;
+      card.classList.add('floating-card');
+    });
+  });
+</script>
 {% endblock %}

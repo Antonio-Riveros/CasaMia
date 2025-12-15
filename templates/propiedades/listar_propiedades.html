@@ -5,61 +5,340 @@
 
 {% block content %}
 <div class="container py-5">
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="mb-0">Propiedades disponibles</h2>
-
-    {% if user.is_authenticated and user.propiedades.exists %}
-      <a href="{% url 'mis_propiedades' %}" class="btn btn-outline-primary">
-        <i class="bi bi-building"></i> Ver mis propiedades
-      </a>
-    {% endif %}
+  <!-- Cabecera con búsqueda -->
+  <div class="row align-items-center mb-5">
+    <div class="col-md-6">
+      <h1 class="display-5 fw-bold mb-3">Propiedades <span class="text-primary">Disponibles</span></h1>
+      <p class="text-muted">Encuentra tu próximo hogar entre nuestras selecciones</p>
+    </div>
+    
+    <div class="col-md-6">
+      <div class="d-flex justify-content-between align-items-center gap-3">
+        <!-- Botón para mis propiedades -->
+        {% if user.is_authenticated %}
+          <div class="d-flex gap-2">
+            <a href="{% url 'mis_propiedades' %}" class="btn btn-outline-primary">
+              <i class="bi bi-building me-1"></i> Mis propiedades
+            </a>
+            <a href="{% url 'crear_propiedad' %}" class="btn btn-primary">
+              <i class="bi bi-plus-lg me-1"></i> Publicar
+            </a>
+          </div>
+        {% endif %}
+        
+        <!-- Filtros básicos -->
+        <div class="dropdown">
+          <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+            <i class="bi bi-filter me-1"></i> Filtros
+          </button>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="?orden=precio_asc">Precio: Menor a mayor</a></li>
+            <li><a class="dropdown-item" href="?orden=precio_desc">Precio: Mayor a menor</a></li>
+            <li><a class="dropdown-item" href="?orden=fecha_desc">Más recientes</a></li>
+            <li><a class="dropdown-item" href="?orden=habitaciones_desc">Más habitaciones</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
   </div>
 
+  <!-- Grid de propiedades -->
   {% if propiedades %}
     <div class="row g-4">
       {% for prop in propiedades %}
         <div class="col-md-6 col-lg-4">
-          <a href="{% url 'detalle_propiedad' prop.pk %}" class="text-decoration-none text-dark">
-            <div class="card h-100 shadow-sm hover-shadow">
-              <!-- Imagen principal -->
+          <div class="property-listing-card card border-0 shadow-sm h-100 hover-lift">
+            <!-- Encabezado de la propiedad -->
+            <div class="position-relative overflow-hidden rounded-top">
               {% if prop.imagenes.first %}
-                <img src="{{ prop.imagenes.first.imagen.url }}" class="card-img-top" alt="{{ prop.titulo }}" style="max-height: 200px; object-fit: cover;">
+                <!-- Imagen cargada por el usuario -->
+                <img src="{{ prop.imagenes.first.imagen.url }}" 
+                     class="card-img-top property-img" 
+                     alt="{{ prop.titulo }}"
+                     style="height: 250px; object-fit: cover;">
               {% else %}
-                <img src="{% static 'fotos/default-property.jpg' %}" class="card-img-top" alt="Sin imagen" style="max-height: 200px; object-fit: cover;">
+                <!-- Imagen por defecto -->
+                {% with image_number=forloop.counter|default:1 %}
+                  {% if image_number <= 6 %}
+                    <img src="{% static 'properties/default/property-'|add:image_number|add:'.jpg' %}" 
+                         class="card-img-top property-img" 
+                         alt="{{ prop.titulo }}"
+                         style="height: 250px; object-fit: cover;">
+                  {% else %}
+                    <img src="{% static 'properties/default/property-1.jpg' %}" 
+                         class="card-img-top property-img" 
+                         alt="{{ prop.titulo }}"
+                         style="height: 250px; object-fit: cover;">
+                  {% endif %}
+                {% endwith %}
               {% endif %}
-
-              <!-- Contenido -->
-              <div class="card-body d-flex flex-column">
-                <h5 class="card-title">{{ prop.titulo }}</h5>
-                <p class="text-muted mb-1"><i class="bi bi-geo-alt"></i> {{ prop.ubicacion }}</p>
-                <h6 class="fw-bold mb-2">{{ prop.precio|floatformat:0 }} ARS</h6>
-
-                <div class="mb-2">
-                  <span class="me-2"><i class="bi bi-house-door"></i> {{ prop.habitaciones }} hab.</span>
-                  <span class="me-2"><i class="bi bi-bucket"></i> {{ prop.banos }} baños</span>
-                  <span><i class="bi bi-aspect-ratio"></i> {{ prop.metros_cuadrados }} m²</span>
-                </div>
-
-                <div class="mt-auto">
-                  <button class="btn btn-primary btn-sm w-100">Ver detalles</button>
-                </div>
+              
+              <!-- Badges -->
+              <div class="position-absolute top-0 start-0 m-3">
+                <span class="badge bg-primary">{{ prop.tipo|default:"Venta" }}</span>
+                {% if prop.destacada %}
+                  <span class="badge bg-warning ms-1">Destacada</span>
+                {% endif %}
+              </div>
+              
+              <!-- Botón favorito -->
+              <div class="position-absolute top-0 end-0 m-3">
+                <button class="btn btn-light btn-sm rounded-circle favorite-btn" data-property-id="{{ prop.id }}">
+                  <i class="bi bi-heart"></i>
+                </button>
+              </div>
+              
+              <!-- Precio -->
+              <div class="position-absolute bottom-0 start-0 w-100 p-3" 
+                   style="background: linear-gradient(transparent, rgba(0,0,0,0.7));">
+                <h4 class="text-white mb-0">${{ prop.precio|floatformat:0 }}</h4>
               </div>
             </div>
-          </a>
+            
+            <!-- Contenido de la tarjeta -->
+            <div class="card-body d-flex flex-column">
+              <h5 class="card-title fw-bold mb-2">{{ prop.titulo|truncatechars:40 }}</h5>
+              
+              <!-- Ubicación -->
+              <p class="text-muted mb-3">
+                <i class="bi bi-geo-alt me-1"></i> 
+                {{ prop.ubicacion|truncatechars:30 }}
+              </p>
+              
+              <!-- Características -->
+              <div class="property-meta d-flex justify-content-between mb-3">
+                <div class="text-center">
+                  <div class="fs-5 fw-bold text-primary">{{ prop.habitaciones|default:"-" }}</div>
+                  <div class="small text-muted">Dorm.</div>
+                </div>
+                <div class="text-center">
+                  <div class="fs-5 fw-bold text-primary">{{ prop.banos|default:"-" }}</div>
+                  <div class="small text-muted">Baños</div>
+                </div>
+                <div class="text-center">
+                  <div class="fs-5 fw-bold text-primary">{{ prop.metros_cuadrados|default:"-" }}</div>
+                  <div class="small text-muted">m²</div>
+                </div>
+                <div class="text-center">
+                  <div class="fs-5 fw-bold text-primary">
+                    {% if prop.garaje %}{{ prop.garaje }}{% else %}0{% endif %}
+                  </div>
+                  <div class="small text-muted">Cocheras</div>
+                </div>
+              </div>
+              
+              <!-- Descripción -->
+              <p class="card-text text-muted small mb-3 flex-grow-1">
+                {{ prop.descripcion|truncatechars:100|default:"Sin descripción disponible" }}
+              </p>
+              
+              <!-- Botón de acción -->
+              <div class="d-grid">
+                <a href="{% url 'detalle_propiedad' prop.pk %}" class="btn btn-primary">
+                  <i class="bi bi-eye me-1"></i> Ver detalles
+                </a>
+              </div>
+            </div>
+            
+            <!-- Footer de la tarjeta -->
+            <div class="card-footer bg-transparent border-top-0 pt-0">
+              <div class="d-flex justify-content-between align-items-center small">
+                <span class="text-muted">
+                  <i class="bi bi-calendar me-1"></i>
+                  {{ prop.fecha_publicacion|date:"d/m/Y" }}
+                </span>
+                <span class="text-muted">
+                  <i class="bi bi-person me-1"></i>
+                  {{ prop.propietario.username|truncatechars:15 }}
+                </span>
+              </div>
+            </div>
+          </div>
         </div>
       {% endfor %}
     </div>
+    
+    <!-- Paginación -->
+    {% if propiedades.paginator.num_pages > 1 %}
+      <nav class="mt-5">
+        <ul class="pagination justify-content-center">
+          {% if propiedades.has_previous %}
+            <li class="page-item">
+              <a class="page-link" href="?page=1">&laquo; Primera</a>
+            </li>
+            <li class="page-item">
+              <a class="page-link" href="?page={{ propiedades.previous_page_number }}">Anterior</a>
+            </li>
+          {% endif %}
+          
+          <li class="page-item disabled">
+            <span class="page-link">
+              Página {{ propiedades.number }} de {{ propiedades.paginator.num_pages }}
+            </span>
+          </li>
+          
+          {% if propiedades.has_next %}
+            <li class="page-item">
+              <a class="page-link" href="?page={{ propiedades.next_page_number }}">Siguiente</a>
+            </li>
+            <li class="page-item">
+              <a class="page-link" href="?page={{ propiedades.paginator.num_pages }}">Última &raquo;</a>
+            </li>
+          {% endif %}
+        </ul>
+      </nav>
+    {% endif %}
+    
   {% else %}
-    <p>No hay propiedades publicadas aún.</p>
+    <!-- Estado vacío -->
+    <div class="text-center py-5 my-5">
+      <div class="mb-4">
+        <i class="bi bi-house-x display-1 text-muted"></i>
+      </div>
+      <h3 class="mb-3">No hay propiedades disponibles</h3>
+      <p class="text-muted mb-4">Sé el primero en publicar una propiedad en CasaMía</p>
+      {% if user.is_authenticated %}
+        <a href="{% url 'crear_propiedad' %}" class="btn btn-primary btn-lg">
+          <i class="bi bi-plus-lg me-2"></i>Publicar primera propiedad
+        </a>
+      {% else %}
+        <a href="{% url 'register' %}" class="btn btn-primary btn-lg">
+          <i class="bi bi-person-plus me-2"></i>Regístrate para publicar
+        </a>
+      {% endif %}
+    </div>
   {% endif %}
 </div>
 
+<!-- Estilos específicos -->
 <style>
-.hover-shadow:hover {
-  box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15) !important;
-  transform: translateY(-2px);
-  transition: all 0.3s ease;
-  cursor: pointer;
-}
+  .property-listing-card {
+    transition: all 0.3s ease;
+    border-radius: 16px;
+    overflow: hidden;
+  }
+  
+  .property-listing-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(156, 107, 255, 0.1) !important;
+  }
+  
+  .property-img {
+    transition: transform 0.5s ease;
+  }
+  
+  .property-listing-card:hover .property-img {
+    transform: scale(1.05);
+  }
+  
+  .property-meta {
+    border-top: 1px solid rgba(0,0,0,0.1);
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+    padding: 1rem 0;
+  }
+  
+  [data-bs-theme="dark"] .property-meta {
+    border-color: rgba(255,255,255,0.1);
+  }
+  
+  .hover-lift {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .favorite-btn:hover {
+    background-color: var(--bs-primary) !important;
+    color: white !important;
+  }
+  
+  .favorite-btn.active {
+    background-color: var(--bs-danger) !important;
+    color: white !important;
+  }
+  
+  .favorite-btn.active i {
+    fill: currentColor;
+  }
 </style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Botones de favoritos
+    const favoriteBtns = document.querySelectorAll('.favorite-btn');
+    favoriteBtns.forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const propertyId = this.getAttribute('data-property-id');
+        const icon = this.querySelector('i');
+        const isActive = this.classList.contains('active');
+        
+        // Aquí puedes hacer una petición AJAX para guardar el favorito
+        fetch(`/api/favoritos/${propertyId}/`, {
+          method: isActive ? 'DELETE' : 'POST',
+          headers: {
+            'X-CSRFToken': getCookie('csrftoken'),
+            'Content-Type': 'application/json'
+          }
+        })
+        .then(response => {
+          if (response.ok) {
+            this.classList.toggle('active');
+            if (this.classList.contains('active')) {
+              icon.classList.remove('bi-heart');
+              icon.classList.add('bi-heart-fill');
+              showToast('Agregado a favoritos', 'success');
+            } else {
+              icon.classList.remove('bi-heart-fill');
+              icon.classList.add('bi-heart');
+              showToast('Eliminado de favoritos', 'info');
+            }
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          showToast('Error al guardar favorito', 'error');
+        });
+      });
+    });
+    
+    // Función para obtener el token CSRF
+    function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+          }
+        }
+      }
+      return cookieValue;
+    }
+    
+    // Función para mostrar notificaciones
+    function showToast(message, type = 'info') {
+      // Implementación básica de toast
+      const toast = document.createElement('div');
+      toast.className = `toast align-items-center text-bg-${type} border-0 position-fixed bottom-0 end-0 m-3`;
+      toast.setAttribute('role', 'alert');
+      toast.innerHTML = `
+        <div class="d-flex">
+          <div class="toast-body">${message}</div>
+          <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+        </div>
+      `;
+      document.body.appendChild(toast);
+      
+      const bsToast = new bootstrap.Toast(toast);
+      bsToast.show();
+      
+      setTimeout(() => {
+        toast.remove();
+      }, 3000);
+    }
+  });
+</script>
 {% endblock %}
